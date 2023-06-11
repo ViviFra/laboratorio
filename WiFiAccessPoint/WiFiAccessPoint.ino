@@ -1,15 +1,6 @@
 #include <dummy.h>
 
-/*
-  WiFiAccessPoint.ino creates a WiFi access point and provides a web server on it.
 
-  Steps:
-  1. Connect to the access point named in ssid
-  2. Run PuTTY terminal with 192.168.4.1 as IP address and 80 as port
-
-  Created for esp32-DEVKIT V1 on 2021/03/29
-  by: Fernando Negozi
-*/
 
 
 #include <WiFi.h>
@@ -56,12 +47,17 @@ void loop() {
     String acquiredData = "";
     while (client.connected()) {            // loop while the client's connected
       if (client.available()) {             // if there's bytes to read from the client,
-        currentLine = client.readStringUntil('\n');        // read a byte, then
+        currentLine = client.readString();        // read a byte, then
         Serial.println(currentLine);
         client.println(currentLine);
+        Serial2.print(currentLine);
       }
-      sleep(1);
-      if (currentLine.equals("dND")) {
+      if (currentLine.equals("dND\n")) {
+        Serial.println("INIZIO ACQUISIZIONE...");
+        acquiredData = Serial2.readString();
+        Serial.println("Ricevuto dalla scheda: "+ acquiredData);
+        Serial.println("FINE ACQUISIZIONE.");
+        client.println(acquiredData);
         client.stop();
       }
     }

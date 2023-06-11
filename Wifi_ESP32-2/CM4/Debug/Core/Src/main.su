@@ -1,0 +1,12 @@
+../Core/Src/main.c:102:6:HAL_UART_TxCpltCallback	16	static
+../Core/Src/main.c:107:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/main.c:111:6:getFixedArray	96	dynamic
+../Core/Src/main.c:140:8:generateRandomNumber	32	static
+../Core/Src/main.c:151:5:main	16	static
+../Core/Src/main.c:243:6:MX_ETH_Init	8	static
+../Core/Src/main.c:292:13:MX_TIM2_Init	40	static
+../Core/Src/main.c:337:13:MX_TIM3_Init	64	static
+../Core/Src/main.c:408:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:456:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:498:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/main.c:522:6:Error_Handler	4	static,ignoring_inline_asm

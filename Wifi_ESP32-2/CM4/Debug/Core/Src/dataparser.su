@@ -1,0 +1,2 @@
+../Core/Src/dataparser.c:17:6:clearCommand	24	static
+../Core/Src/dataparser.c:30:6:parseCommand	16	static
