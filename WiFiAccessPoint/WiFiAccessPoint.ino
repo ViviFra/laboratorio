@@ -49,7 +49,7 @@ void loop() {
       if (client.available()) {             // if there's bytes to read from the client,
         currentLine = client.readString();        // read a byte, then
         Serial.println(currentLine);
-        client.println(currentLine);
+       // client.println(currentLine);
         Serial2.print(currentLine);
       }
       if (currentLine.equals("dND\n")) {
