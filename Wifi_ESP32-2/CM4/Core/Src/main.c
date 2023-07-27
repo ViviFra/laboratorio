@@ -87,27 +87,29 @@ static void MX_TIM3_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-//variabili per i comandi del wifi
-extern unsigned int TX_Flag_DSTART;
-extern unsigned int TX_Flag_DSTOP;
+//variabile di flag della trasmissione
 extern unsigned int TX_Flag_DSEND;
 
 #define DIM_COMMAND 4			//dimensione buffer di ricezione (comando inviato tramite Matlab)
 uint8_t rxBuff[DIM_COMMAND];	//buffer di ricezione
 
-uint8_t pc_buffer[20]; //dimensione della stringa inviata (letta sul file .txt su Matlab)
+uint8_t pc_buffer[32]; //dimensione della stringa inviata (letta sul file .txt su Matlab)
 double duty_1 = 0, duty_2 = 0, duty_3 = 0, duty_4 = 0;
 
-/* Callback per la trasmissione che si attiva una volta che tutti i dati sono pronti per l'invio*/ //(l'ESP trasmette alla scheda)
+/* Callback per la trasmissione che si attiva una volta che tutti i dati sono pronti per l'invio*/ //(la scheda trasmette all'esp)
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
 
 }
 
-/* Callback per la ricezione che si attiva una volta ricevuti tutti i dati*/ //(l'ESP riceve da Matlab)
+/* Callback per la ricezione che si attiva una volta ricevuti tutti i dati*/ //(la scheda riceve dall'esp)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-	HAL_UART_Receive_IT(&huart2, rxBuff, sizeof(rxBuff));
+	 HAL_UART_Receive_IT(&huart2, rxBuff, sizeof(rxBuff));
+	 parseCommand(rxBuff); //parse del comando inviato da MATLAB all'ESP
+	 clearCommand(rxBuff); //pulizia del buffer di ricezione;
 }
 
+//crea rispetto ad un double di partenza un array
+//di unsigned int con senza perdita di cifre significative
 void getFixedArray(double num, int nInt, int nDec, uint8_t *result) {
 	int p = 0;
 	for (int i=0; ; i++) {
@@ -214,22 +216,16 @@ int main(void)
 		duty_3 = (double) (i%1000) / 1000;
 		duty_4 = (double) (i%1000) / 1000;
 		i++;
-		if (TX_Flag_DSTART) {
-			//armamento dei motori
-		}
 
-		if (TX_Flag_DSTOP) {
-			//spegnimento dei motori
-		}
-
-		if (TX_Flag_DSEND) {
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); //accensione led verde (se c'è trasmissione)
-			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET); //spegnimento led verde (se non c'è trasmissione)
-		} else {
-			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_SET); //accensione led verde (se c'è trasmissione)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET); //spegnimento led verde (se non c'è trasmissione)
-		}
-
+        if (TX_Flag_DSEND) {
+		            // se c'è trasmissione
+		            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); //accensione led verde
+		            HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_RESET); //spegnimento led giallo
+		        } else {
+		            // se non c'è trasmissione
+		            HAL_GPIO_WritePin(GPIOE, GPIO_PIN_1, GPIO_PIN_SET); //accensione led giallo
+		            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET); //spegnimento led verde
+		        }
 
 	}
   /* USER CODE END 3 */
@@ -497,18 +493,28 @@ static void MX_GPIO_Init(void)
 //questo esempio serve per verificare che l'ESP funzioni correttamente
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	// This callback is automatically called by the HAL on the UEV event
-	parseCommand(rxBuff); //parse del comando inviato da MATLAB all'ESP
-	clearCommand(rxBuff); //pulizia del buffer di ricezione
 	if (htim == &htim2) {
 		if (TX_Flag_DSEND) {
-			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer);
-			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer[4]);
-			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer[8]);
-			getFixedArray(duty_1, 1, 1, &pc_buffer[12]);
-			getFixedArray(duty_2, 1, 1, &pc_buffer[14]);
-			getFixedArray(duty_3, 1, 1, &pc_buffer[16]);
-			getFixedArray(duty_4, 1, 1, &pc_buffer[18]);
-			HAL_UART_Transmit_IT(&huart2, pc_buffer, sizeof(pc_buffer));
+			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer); //roll
+			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer[4]); //pitch
+			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer[8]); //yaw
+
+
+
+			getFixedArray(generateRandomNumber(0, 30), 2, 2, &pc_buffer[12]); //velocità angolare roll
+			getFixedArray(generateRandomNumber(0, 30), 2, 2, &pc_buffer[16]); //velocità angolare pitch
+			getFixedArray(generateRandomNumber(0, 30), 2, 2, &pc_buffer[20]); //velocità angolare yaw
+
+
+
+			getFixedArray(duty_1, 1, 1, &pc_buffer[24]); //duty del motore 1
+			getFixedArray(duty_2, 1, 1, &pc_buffer[26]); //duty del motore 2
+			getFixedArray(duty_3, 1, 1, &pc_buffer[28]); //duty del motore 3
+		    getFixedArray(duty_4, 1, 1, &pc_buffer[30]); //duty del motore 4
+
+
+
+			            HAL_UART_Transmit_IT(&huart2, pc_buffer, sizeof(pc_buffer));
 		}
 	}
 }
