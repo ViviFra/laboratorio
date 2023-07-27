@@ -10,12 +10,11 @@
 #define LED_BUILTIN 2   // Set the GPIO pin where you connected your test LED or comment this line out if your dev board has a built-in LED
 
 const char *ssid = "Automa";
-const char *password = "12345678";
 
 WiFiServer server(80);
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);
+
 
   Serial.begin(115200);
 

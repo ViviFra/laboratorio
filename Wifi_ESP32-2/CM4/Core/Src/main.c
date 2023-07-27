@@ -118,7 +118,7 @@ void getFixedArray(double num, int nInt, int nDec, uint8_t *result) {
 		}
 	}
 	char temp[nInt+nDec+1];
-	ftoa(num, temp, nInt+nDec+1);
+	ftoa(num, temp, nDec);
 	int j=0;
 	for (int i=0; i<nInt; i++) {
 		if (nInt-p-i <= 0) {
