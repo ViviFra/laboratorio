@@ -10,5 +10,6 @@
 
 void parseCommand();
 void clearCommand();
+void getFixedArray();
 
 #endif

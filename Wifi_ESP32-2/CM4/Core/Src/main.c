@@ -24,6 +24,8 @@
 /* USER CODE BEGIN Includes */
 #include "dataparser.h"
 #include <stdlib.h>
+#include "ftoa.h"
+#include <time.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,37 +108,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	 HAL_UART_Receive_IT(&huart2, rxBuff, sizeof(rxBuff));
 	 parseCommand(rxBuff); //parse del comando inviato da MATLAB all'ESP
 	 clearCommand(rxBuff); //pulizia del buffer di ricezione;
-}
-
-//crea rispetto ad un double di partenza un array
-//di unsigned int con senza perdita di cifre significative
-void getFixedArray(double num, int nInt, int nDec, uint8_t *result) {
-	int p = 0;
-	for (int i=0; ; i++) {
-		int r = (int) num/pow(10,i);
-		if (r == 0) {
-			p = i;
-			break;
-		}
-	}
-	char temp[nInt+nDec+1];
-	ftoa(num, temp, nDec);
-	int j=0;
-	for (int i=0; i<nInt; i++) {
-		if (nInt-p-i <= 0) {
-			result[i] = temp[j];
-			j++;
-		} else {
-			result[i] = '0';
-		}
-	}
-	if (p==0)
-		j++;
-	j++;
-	for (int i=nInt; i<nInt+nDec; i++) {
-		result[i] = temp[j];
-		j++;
-	}
 }
 
 double generateRandomNumber(int min, int max) {
@@ -495,7 +466,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	// This callback is automatically called by the HAL on the UEV event
 	if (htim == &htim2) {
 		if (TX_Flag_DSEND) {
-			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer); //roll
+//			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer); //roll
+			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer[0]);
 			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer[4]); //pitch
 			getFixedArray(generateRandomNumber(0, 360), 3, 1, &pc_buffer[8]); //yaw
 

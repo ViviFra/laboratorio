@@ -5,7 +5,6 @@
 #include "string.h"
 #include "stdint.h"
 
-unsigned int TX_Flag_DSTART = 0; /*Flag to turn on the drone*/
 unsigned int TX_Flag_DSEND = 0; /*Flag to start transmission*/
 
 /**********************************************
@@ -30,15 +29,6 @@ void clearCommand(uint8_t data[]) {
 void parseCommand(char *data) {
 	if (data[2]) {
 		switch (data[2]) {
-		case 'N': {
-			TX_Flag_DSTART = 1;
-		}
-			break;
-
-		case 'F': {
-			TX_Flag_DSTART = 0;
-		}
-			break;
 
 		case 'E': {
 			TX_Flag_DSEND = 1;
@@ -56,3 +46,33 @@ void parseCommand(char *data) {
 	}
 }
 
+//crea rispetto ad un double di partenza un array
+//di unsigned int con senza perdita di cifre significative
+void getFixedArray(double num, int nInt, int nDec, uint8_t *result) {
+	int p = 0;
+	for (int i=0; ; i++) {
+		int r = (int) num/pow(10,i);
+		if (r == 0) {
+			p = i;
+			break;
+		}
+	}
+	char temp[nInt+nDec+1];
+	ftoa(num, temp, nDec);
+	int j=0;
+	for (int i=0; i<nInt; i++) {
+		if (nInt-p-i <= 0) {
+			result[i] = temp[j];
+			j++;
+		} else {
+			result[i] = '0';
+		}
+	}
+	if (p==0)
+		j++;
+	j++;
+	for (int i=nInt; i<nInt+nDec; i++) {
+		result[i] = temp[j];
+		j++;
+	}
+}
