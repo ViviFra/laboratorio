@@ -95,7 +95,8 @@ extern unsigned int TX_Flag_DSEND;
 #define DIM_COMMAND 4			//dimensione buffer di ricezione (comando inviato tramite Matlab)
 uint8_t rxBuff[DIM_COMMAND];	//buffer di ricezione
 
-uint8_t pc_buffer[32]; //dimensione della stringa inviata (letta sul file .txt su Matlab)
+//uint8_t pc_buffer[34]; //dimensione della stringa inviata (letta sul file .txt su Matlab)
+uint8_t pc_buffer[33]; //dimensione della stringa inviata (letta sul file .txt su Matlab)
 double duty_1 = 0, duty_2 = 0, duty_3 = 0, duty_4 = 0;
 
 /* Callback per la trasmissione che si attiva una volta che tutti i dati sono pronti per l'invio*/ //(la scheda trasmette all'esp)
@@ -483,6 +484,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 			getFixedArray(duty_2, 1, 1, &pc_buffer[26]); //duty del motore 2
 			getFixedArray(duty_3, 1, 1, &pc_buffer[28]); //duty del motore 3
 		    getFixedArray(duty_4, 1, 1, &pc_buffer[30]); //duty del motore 4
+
+		    pc_buffer[32]= '\n' ;
+
+
 
 
 
