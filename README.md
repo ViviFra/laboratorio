@@ -11,11 +11,15 @@ e per quanto riguarda l’ide di Arduino la procedura per collegare in maniera c
 non sarà “a bordo” del drone e quindi collegato alla scheda bensì collegato al pc di modo da poter vedere anche la sua seriale. 
 
 Links:
+
 https://www.st.com/en/development-tools/stm32cubeide.html
 
 https://www.st.com/en/development-tools/stm32cubeprog.html
+
 https://www.arduino.cc/en/software
+
 https://randomnerdtutorials.com/installing-esp32-arduino-ide-2-0/
+
 https://it.mathworks.com/products/matlab.html
 
 Il ciclo del funzionamento parte da Matlab dal quale ,una volta eseguito il codice, parte in automatico il comando “dSE” che fa 
