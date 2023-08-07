@@ -12,6 +12,7 @@ non sarà “a bordo” del drone e quindi collegato alla scheda bensì collegat
 
 Links:
 https://www.st.com/en/development-tools/stm32cubeide.html
+
 https://www.st.com/en/development-tools/stm32cubeprog.html
 https://www.arduino.cc/en/software
 https://randomnerdtutorials.com/installing-esp32-arduino-ide-2-0/
